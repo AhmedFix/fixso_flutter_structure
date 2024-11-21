@@ -1,6 +1,6 @@
 name: fixso_flutter_structure
 description: A Dart package to generate a specific project structure.
-version: 0.0.3
+version: 0.0.1
 homepage: "https://github.com/AhmedFix/fixso_flutter_structure.git"
 
 environment:
