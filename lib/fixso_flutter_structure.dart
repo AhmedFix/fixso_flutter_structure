@@ -15,6 +15,7 @@ void generateProjectStructure(String targetDir) {
     '$targetDir/utils',
   ];
 
+  /////
   // Create directories
   for (String dir in directories) {
     if (!Directory(dir).existsSync()) {
