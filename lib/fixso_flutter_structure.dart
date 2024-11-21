@@ -5,7 +5,7 @@ import 'dart:io';
 void main(List<String> args) {
   // Check if the user provided a target directory
   if (args.isEmpty) {
-    print('Usage: dart run structure_generator <target_directory>');
+    print('Usage: dart run fixso_flutter_structure <target_directory>');
     return;
   }
 
@@ -23,14 +23,7 @@ void main(List<String> args) {
   ];
 
   // Create directories
-  for (String dir in directories) {
-    if (!Directory(dir).existsSync()) {
-      Directory(dir).createSync(recursive: true);
-      print('Created directory: $dir');
-    } else {
-      print('Directory already exists: $dir');
-    }
-  }
+  createDirectories(directories);
 
   // Define the files to create
   final List<String> files = [
@@ -50,14 +43,36 @@ void main(List<String> args) {
   ];
 
   // Create files
-  for (String file in files) {
-    if (!File(file).existsSync()) {
-      File(file).createSync();
-      print('Created file: $file');
+  createFiles(files, targetDir);
 
-      // Populate app.dart with imports for all other files
-      if (file == '$targetDir/app.dart') {
-        final appImports = '''
+  print('Project structure created successfully in $targetDir!');
+}
+
+void createDirectories(List<String> directories) {
+  for (String dir in directories) {
+    try {
+      if (!Directory(dir).existsSync()) {
+        Directory(dir).createSync(recursive: true);
+        print('Created directory: $dir');
+      } else {
+        print('Directory already exists: $dir');
+      }
+    } catch (e) {
+      print('Failed to create directory: $dir. Error: $e');
+    }
+  }
+}
+
+void createFiles(List<String> files, String targetDir) {
+  for (String file in files) {
+    try {
+      if (!File(file).existsSync()) {
+        File(file).createSync();
+        print('Created file: $file');
+
+        // Populate app.dart with imports for all other files
+        if (file == '$targetDir/app.dart') {
+          final appImports = '''
 export 'bindings/bindings.dart';
 export 'controllers/controllers.dart';
 export 'models/models.dart';
@@ -65,23 +80,24 @@ export 'screens/screens.dart';
 export 'widgets/widgets.dart';
 export 'services/services.dart';
 ''';
-        File(file).writeAsStringSync(appImports);
-      }
+          File(file).writeAsStringSync(appImports);
+        }
 
-      // Populate utils.dart with imports for all utility files
-      if (file == '$targetDir/utils/utils.dart') {
-        final utilsImports = '''
+        // Populate utils.dart with imports for all utility files
+        if (file == '$targetDir/utils/utils.dart') {
+          final utilsImports = '''
 export 'app_colors.dart';
 export 'app_constants.dart';
 export 'app_themes.dart';
 export 'app_styles.dart';
 ''';
-        File(file).writeAsStringSync(utilsImports);
+          File(file).writeAsStringSync(utilsImports);
+        }
+      } else {
+        print('File already exists: $file');
       }
-    } else {
-      print('File already exists: $file');
+    } catch (e) {
+      print('Failed to create file: $file. Error: $e');
     }
   }
-
-  print('Project structure created successfully in $targetDir!');
 }
